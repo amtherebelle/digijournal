@@ -7,6 +7,8 @@ let weekOffset = 0;
 let saveTimer = null;
 let artifactApi = null;
 let artifactChecked = false;
+let newRating = { books: 0, media: 0 };
+let newSeasonCount = {};
 
 const AFFIRMATIONS = [
   "Small steps, kept gently, still arrive.",
@@ -28,6 +30,28 @@ const MOODS = [
 ];
 
 const DAY_LABELS = ["Mon","Tue","Wed","Thu","Fri","Sat","Sun"];
+
+/* Themed icons per default habit — outline draws in var(--ink-soft), and
+   fills solid with var(--pink-deep) once ticked (handled by .chk[data-on] CSS). */
+const HABIT_ICONS = {
+  water: '<svg viewBox="0 0 24 24"><path d="M12 3c3 4 6 7.8 6 11.3A6 6 0 1 1 6 14.3C6 10.8 9 7 12 3z"/></svg>',
+  sleep: '<svg viewBox="0 0 24 24"><path d="M18.5 14.5A7.5 7.5 0 0 1 9.5 5.5a7.5 7.5 0 1 0 9 9z"/></svg>',
+  movement: '<svg viewBox="0 0 24 24"><path d="M4 15l3-3 2 2 4-5 2 2 3-3M4 18h16" stroke-linecap="round" stroke-linejoin="round"/><circle cx="6" cy="7" r="1.6"/></svg>',
+  skincare: '<svg viewBox="0 0 24 24"><path d="M12 3l1.6 4.4L18 9l-4.4 1.6L12 15l-1.6-4.4L6 9l4.4-1.6L12 3z"/><circle cx="18" cy="17" r="1.4"/><circle cx="6" cy="18" r="1"/></svg>',
+  meals: '<svg viewBox="0 0 24 24"><path d="M7 3v7a2 2 0 0 0 4 0V3M9 10v11M9 3v3M15 3c-1.2 0-2 1.5-2 4s.8 4 2 4v10" stroke-linecap="round"/></svg>',
+  vitamins: '<svg viewBox="0 0 24 24"><rect x="4" y="9" width="16" height="8" rx="4" transform="rotate(-30 12 13)"/><line x1="12" y1="7.5" x2="12" y2="18.5" transform="rotate(-30 12 13)"/></svg>',
+  gratitude_dua: '<svg viewBox="0 0 24 24"><path d="M12 20s-7-4.4-7-9.5A4.5 4.5 0 0 1 12 8a4.5 4.5 0 0 1 7 2.5C19 15.6 12 20 12 20z"/></svg>',
+  prayers5: '<svg viewBox="0 0 24 24"><path d="M5 20V11a7 7 0 0 1 14 0v9" stroke-linecap="round"/><path d="M5 20h14M9 20v-5a3 3 0 0 1 6 0v5"/></svg>',
+  quran: '<svg viewBox="0 0 24 24"><path d="M12 5c-2-1.4-4.6-1.8-7-1v13c2.4-.8 5-.4 7 1 2-1.4 4.6-1.8 7-1V4c-2.4-.8-5-.4-7 1z" stroke-linejoin="round"/><path d="M12 5v13"/></svg>',
+  istighfar: '<svg viewBox="0 0 24 24"><circle cx="12" cy="4.5" r="1.4"/><circle cx="17.8" cy="7.5" r="1.4"/><circle cx="19.5" cy="13.5" r="1.4"/><circle cx="16" cy="18.5" r="1.4"/><circle cx="9.5" cy="19.8" r="1.4"/><circle cx="5" cy="15.5" r="1.4"/><circle cx="5.5" cy="9" r="1.4"/></svg>',
+  tidy10: '<svg viewBox="0 0 24 24"><path d="M14 3l6 6-8.5 8.5a3 3 0 0 1-4.2 0l-1.8-1.8a3 3 0 0 1 0-4.2L14 3z" stroke-linejoin="round"/><path d="M4 20l3.5-3.5" stroke-linecap="round"/></svg>',
+  mealprep: '<svg viewBox="0 0 24 24"><path d="M4 10h16v3a7 7 0 0 1-7 7H11a7 7 0 0 1-7-7v-3z"/><path d="M2 10h20M8 10V6M16 10V6" stroke-linecap="round"/></svg>',
+  creativetime: '<svg viewBox="0 0 24 24"><path d="M3 21l1-4.5L15.5 5 19 8.5 7.5 20 3 21z" stroke-linejoin="round"/><path d="M13.5 6.5L17.5 10.5" /></svg>',
+  selfgrowth: '<svg viewBox="0 0 24 24"><path d="M12 21V11" stroke-linecap="round"/><path d="M12 12C12 8 9 6 5 6c0 4 3 6 7 6zM12 12c0-4.5 3-6.5 7-6.5 0 4.5-3 6.5-7 6.5z"/></svg>',
+  socialeffort: '<svg viewBox="0 0 24 24"><path d="M4 5h16v10H9l-4 4V5z" stroke-linejoin="round"/></svg>'
+};
+const DEFAULT_ICON = '<svg viewBox="0 0 24 24"><path d="M12 3l2.2 5.6 6 .4-4.6 4 1.5 5.8L12 15.8 6.9 18.8l1.5-5.8-4.6-4 6-.4L12 3z" stroke-linejoin="round"/></svg>';
+function habitIcon(id){ return HABIT_ICONS[id] || DEFAULT_ICON; }
 
 /* ================= helpers ================= */
 function uid(){ return Date.now().toString(36) + Math.random().toString(36).slice(2,7); }
@@ -131,6 +155,7 @@ function defaultState(){
     yearlyGoals: [],
     books: [],
     media: [],
+    series: [],
     bucketCategories: [
       {id:"travel", name:"Travel"},
       {id:"growth", name:"Personal growth"}
@@ -163,6 +188,7 @@ function loadInitialState(){
   if(!state.dailyCheck) state.dailyCheck = {};
   if(!state.books) state.books = [];
   if(!state.media) state.media = [];
+  if(!state.series) state.series = [];
   if(!state.bucketCategories) state.bucketCategories = [];
   if(!state.bucketItems) state.bucketItems = [];
 }
@@ -306,7 +332,7 @@ function renderHabits(){
       const cells = days.map(d=>{
         const key = isoDate(d);
         const on = !!(state.habitLog[key] && state.habitLog[key][h.id]);
-        return `<td><span class="chk" role="checkbox" aria-checked="${on}" tabindex="0" data-action="toggle-habit" data-habit="${h.id}" data-date="${key}" data-on="${on}">${on?"✓":""}</span></td>`;
+        return `<td><span class="chk" role="checkbox" aria-checked="${on}" tabindex="0" data-action="toggle-habit" data-habit="${h.id}" data-date="${key}" data-on="${on}">${habitIcon(h.id)}</span></td>`;
       }).join("");
       return `<tr>
         <td><div class="habit-name">${esc(h.name)}<span class="rm" data-action="remove-habit" data-group="${g.id}" data-habit="${h.id}" title="Remove tracker">✕</span></div></td>
@@ -372,7 +398,7 @@ function renderDailyCheck(){
   <div class="section">
     <div class="section-head">
       <div>
-        <h2>Today's check-in</h2>
+        <h2>Today</h2>
         <div class="section-sub">One small win, three things you're grateful for.</div>
       </div>
     </div>
@@ -558,12 +584,25 @@ function renderGoals(){
 }
 
 /* ================= render: this year (books / media / bucket list) ================= */
+function renderStars(rating, opts){
+  opts = opts || {};
+  const stars = [1,2,3,4,5].map(n=>{
+    const on = n <= (rating||0);
+    if(opts.readOnly){
+      return `<span class="star" data-on="${on}">★</span>`;
+    }
+    return `<span class="star" data-on="${on}" data-action="${opts.action}" data-kind="${opts.kind||''}" data-id="${opts.id||''}" data-value="${n}">★</span>`;
+  }).join("");
+  return `<span class="stars${opts.picker?' picker':''}">${stars}</span>`;
+}
+
 function renderMediaCard(kind, title, placeholder){
   const list = state[kind];
   const items = [...list].sort((a,b)=> (b.date||"").localeCompare(a.date||""));
   const rows = items.length ? items.map(it=>`
     <li class="media-row">
       <span class="txt">${esc(it.title)}</span>
+      ${renderStars(it.rating, {action:"set-rating", kind, id:it.id})}
       <span class="media-date">${it.date ? fmtShort(new Date(it.date)) : ""}</span>
       <span class="del" data-action="remove-media" data-kind="${kind}" data-id="${it.id}">remove</span>
     </li>`).join("") : `<div class="empty-note">Nothing logged yet.</div>`;
@@ -576,6 +615,49 @@ function renderMediaCard(kind, title, placeholder){
       <input type="text" id="new-${kind}-title" placeholder="${placeholder}">
       <input type="date" id="new-${kind}-date" style="flex:0 0 150px;">
       <button type="button" class="btn ghost" data-action="add-media" data-kind="${kind}">Add</button>
+    </div>
+    <div class="new-rating-row">
+      <label>Rating</label>
+      ${renderStars(newRating[kind], {action:"set-new-rating", kind, picker:true})}
+    </div>
+  </div>`;
+}
+
+function renderSeries(){
+  const rows = state.series.length ? state.series.map(s=>{
+    const seasons = s.seasons.map(season=>{
+      const eps = season.watched.map((on,i)=>`
+        <span class="ep-box" data-on="${on}" data-action="toggle-episode" data-series="${s.id}" data-season="${season.id}" data-ep="${i}">${i+1}</span>`).join("");
+      return `
+        <div class="season-block">
+          <div class="season-label">Season ${season.seasonNumber}</div>
+          <div class="episode-row">${eps}</div>
+        </div>`;
+    }).join("");
+
+    const seasonCount = newSeasonCount[s.id] || "";
+
+    return `
+      <div class="series-card">
+        <div class="series-top">
+          <span class="series-title">${esc(s.title)}</span>
+          <span class="del" data-action="remove-series" data-series="${s.id}">remove</span>
+        </div>
+        ${seasons}
+        <div class="add-season-row">
+          <input type="number" min="1" id="season-ep-count-${s.id}" placeholder="Episodes" value="${seasonCount}">
+          <button type="button" class="btn ghost sm" data-action="add-season" data-series="${s.id}">Add season</button>
+        </div>
+      </div>`;
+  }).join("") : `<div class="empty-note">No series yet.</div>`;
+
+  return `
+  <div class="card">
+    <h3>TV series</h3>
+    ${rows}
+    <div class="add-habit-row" style="margin-top:16px;">
+      <input type="text" id="new-series-title" placeholder="Series title">
+      <button type="button" class="btn ghost" data-action="add-series">Add series</button>
     </div>
   </div>`;
 }
@@ -619,9 +701,10 @@ function renderThisYear(){
         <div class="section-sub">What you're reading, watching, and dreaming about.</div>
       </div>
     </div>
-    <div class="grid-3">
+    <div class="grid-2">
       ${renderMediaCard("books","Books read","Book title")}
-      ${renderMediaCard("media","Movies &amp; shows watched","Title")}
+      ${renderMediaCard("media","Movies watched","Title")}
+      ${renderSeries()}
       ${renderBucketList()}
     </div>
   </div>`;
@@ -659,8 +742,8 @@ function renderJournal(){
 function renderApp(){
   return `
     ${renderHero()}
-    ${renderHabits()}
     ${renderDailyCheck()}
+    ${renderHabits()}
     ${renderProjects()}
     ${renderGoals()}
     ${renderThisYear()}
@@ -773,10 +856,41 @@ function addGoal(text){
 function addMedia(kind, title, date){
   title = title.trim();
   if(!title) return;
-  state[kind].push({id:uid(), title, date: date || todayKey()});
+  state[kind].push({id:uid(), title, date: date || todayKey(), rating: newRating[kind] || 0});
+  newRating[kind] = 0;
 }
 function removeMedia(kind, id){
   state[kind] = state[kind].filter(i=>i.id!==id);
+}
+function setNewRating(kind, value){
+  newRating[kind] = Number(value);
+}
+function setRating(kind, id, value){
+  const it = state[kind].find(i=>i.id===id);
+  if(it) it.rating = Number(value);
+}
+function addSeries(title){
+  title = title.trim();
+  if(!title) return;
+  state.series.push({id:uid(), title, seasons:[]});
+}
+function removeSeries(id){
+  state.series = state.series.filter(s=>s.id!==id);
+}
+function addSeason(seriesId, episodeCount){
+  const s = state.series.find(s=>s.id===seriesId);
+  if(!s) return;
+  const n = Math.max(1, Math.min(60, Number(episodeCount)||0));
+  if(!n) return;
+  s.seasons.push({id:uid(), seasonNumber: s.seasons.length+1, watched: new Array(n).fill(false)});
+  delete newSeasonCount[seriesId];
+}
+function toggleEpisode(seriesId, seasonId, epIndex){
+  const s = state.series.find(s=>s.id===seriesId);
+  if(!s) return;
+  const season = s.seasons.find(se=>se.id===seasonId);
+  if(!season) return;
+  season.watched[epIndex] = !season.watched[epIndex];
 }
 function toggleBucket(id){
   const it = state.bucketItems.find(i=>i.id===id);
@@ -873,6 +987,32 @@ function onClick(e){
       break;
     }
     case "remove-media": removeMedia(t.getAttribute("data-kind"), t.getAttribute("data-id")); break;
+    case "set-new-rating": {
+      // Don't full-render here: that would wipe any title already typed in
+      // the neighboring add-row input. Just repaint this one star picker.
+      setNewRating(t.getAttribute("data-kind"), t.getAttribute("data-value"));
+      const picker = t.closest(".stars");
+      if(picker){
+        const val = Number(t.getAttribute("data-value"));
+        picker.querySelectorAll(".star").forEach((star,i)=> star.setAttribute("data-on", i < val));
+      }
+      changed = false;
+      break;
+    }
+    case "set-rating": setRating(t.getAttribute("data-kind"), t.getAttribute("data-id"), t.getAttribute("data-value")); break;
+    case "add-series": {
+      const input = document.getElementById("new-series-title");
+      addSeries(input.value);
+      break;
+    }
+    case "remove-series": removeSeries(t.getAttribute("data-series")); break;
+    case "add-season": {
+      const sid = t.getAttribute("data-series");
+      const input = document.getElementById(`season-ep-count-${sid}`);
+      addSeason(sid, input.value);
+      break;
+    }
+    case "toggle-episode": toggleEpisode(t.getAttribute("data-series"), t.getAttribute("data-season"), Number(t.getAttribute("data-ep"))); break;
     case "toggle-bucket": toggleBucket(t.getAttribute("data-id")); break;
     case "remove-bucket": removeBucket(t.getAttribute("data-id")); break;
     case "add-bucket": {
@@ -918,6 +1058,14 @@ function onKeydown(e){
   if(id==="new-milestone-input"){ e.preventDefault(); document.querySelector('[data-action="add-milestone"]').click(); }
   else if(id==="new-goal-input"){ e.preventDefault(); document.querySelector('[data-action="add-goal"]').click(); }
   else if(id==="new-bucket-text"){ e.preventDefault(); document.querySelector('[data-action="add-bucket"]').click(); }
+  else if(id==="new-series-title"){ e.preventDefault(); document.querySelector('[data-action="add-series"]').click(); }
+  else if(id==="new-books-title"){ e.preventDefault(); document.querySelector('[data-action="add-media"][data-kind="books"]').click(); }
+  else if(id==="new-media-title"){ e.preventDefault(); document.querySelector('[data-action="add-media"][data-kind="media"]').click(); }
+  else if(id && id.startsWith("season-ep-count-")){
+    e.preventDefault();
+    const sid = id.replace("season-ep-count-","");
+    document.querySelector(`[data-action="add-season"][data-series="${sid}"]`).click();
+  }
   else if(id && id.startsWith("idea-input-")){
     e.preventDefault();
     const pid = id.replace("idea-input-","");

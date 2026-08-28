@@ -4,76 +4,82 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Asma's Journal</title>
-<meta name="theme-color" content="#7D3A4C">
+<meta name="theme-color" content="#A5406A">
 <link rel="manifest" href="manifest.json">
 <link rel="apple-touch-icon" href="icon192.png">
 <link rel="icon" href="icon192.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500&family=Karla:wght@400;500;700&display=swap">
-<style id="app-style">/* ---------- tokens ---------- */
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500&family=Dancing+Script:wght@600;700&family=Karla:wght@400;500;700&display=swap">
+<style id="app-style">/* ---------- tokens: Asma's "Blush Palette" (Snow / Misty Rose / Petal Pink / Orchid Pink / Amaranth Pink) ---------- */
 :root{
-  --cream:#FBF3EC;
-  --cream-deep:#F3E4DA;
-  --card:#FFFCF9;
-  --pink-pale:#F6D9E2;
-  --pink:#E3A6BA;
-  --pink-deep:#C97891;
-  --burgundy:#7D3A4C;
+  --cream:#F5EAE5;
+  --cream-deep:#EFD9DA;
+  --card:#FFFBFA;
+  --pink-pale:#EFD9DA;
+  --pink:#E8B4B8;
+  --pink-deep:#C97B93;
+  --burgundy:#A5406A;
   --gold:#B98D3E;
   --gold-soft:#E4CFA0;
   --ink:#4A3439;
   --ink-soft:#8A6B71;
-  --line:rgba(125,58,76,0.14);
-  --shadow:0 18px 40px -24px rgba(125,58,76,0.35);
+  --line:rgba(165,64,106,0.14);
+  --shadow:0 18px 40px -24px rgba(165,64,106,0.35);
   --radius:22px;
   --mood-radiant:#C99A3B;
   --mood-content:#D98CA4;
   --mood-steady:#B08A94;
   --mood-heavy:#8C6E77;
   --mood-stormy:#6B4450;
+  --star-on:#C97B93;
+  --star-off:#DCC7C4;
 }
 @media (prefers-color-scheme: dark){
   :root:not([data-theme="light"]){
-    --cream:#241A1D;
-    --cream-deep:#2C2024;
-    --card:#2E2226;
-    --pink-pale:#3B2830;
-    --pink:#C97891;
-    --pink-deep:#E3A6BA;
-    --burgundy:#EFC3CE;
+    --cream:#251A1F;
+    --cream-deep:#2D2126;
+    --card:#302328;
+    --pink-pale:#3D2A31;
+    --pink:#C97B93;
+    --pink-deep:#E8B4B8;
+    --burgundy:#F0BFCF;
     --gold:#D9B36A;
     --gold-soft:#4A3B2C;
-    --ink:#F4E7EA;
-    --ink-soft:#C9A8AF;
-    --line:rgba(244,231,234,0.14);
+    --ink:#F5E9EC;
+    --ink-soft:#CBA9B1;
+    --line:rgba(245,233,236,0.14);
     --shadow:0 18px 40px -22px rgba(0,0,0,0.55);
     --mood-radiant:#E3BE72;
-    --mood-content:#E3A6BA;
+    --mood-content:#E8B4B8;
     --mood-steady:#C9A2AC;
     --mood-heavy:#A98891;
     --mood-stormy:#9A6B78;
+    --star-on:#E8B4B8;
+    --star-off:#4A363C;
   }
 }
 :root[data-theme="dark"]{
-  --cream:#241A1D;
-  --cream-deep:#2C2024;
-  --card:#2E2226;
-  --pink-pale:#3B2830;
-  --pink:#C97891;
-  --pink-deep:#E3A6BA;
-  --burgundy:#EFC3CE;
+  --cream:#251A1F;
+  --cream-deep:#2D2126;
+  --card:#302328;
+  --pink-pale:#3D2A31;
+  --pink:#C97B93;
+  --pink-deep:#E8B4B8;
+  --burgundy:#F0BFCF;
   --gold:#D9B36A;
   --gold-soft:#4A3B2C;
-  --ink:#F4E7EA;
-  --ink-soft:#C9A8AF;
-  --line:rgba(244,231,234,0.14);
+  --ink:#F5E9EC;
+  --ink-soft:#CBA9B1;
+  --line:rgba(245,233,236,0.14);
   --shadow:0 18px 40px -22px rgba(0,0,0,0.55);
   --mood-radiant:#E3BE72;
-  --mood-content:#E3A6BA;
+  --mood-content:#E8B4B8;
   --mood-steady:#C9A2AC;
   --mood-heavy:#A98891;
   --mood-stormy:#9A6B78;
+  --star-on:#E8B4B8;
+  --star-off:#4A363C;
 }
 
 *{box-sizing:border-box;}
@@ -125,7 +131,13 @@ h1,h2,h3{
 .eyebrow{
   font-size:12.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--gold);font-weight:700;
 }
-.hero h1{font-size:clamp(34px,5vw,50px);margin-top:4px;}
+.hero h1{
+  font-family:'Dancing Script','Cormorant Garamond',serif;
+  font-weight:700;
+  font-size:clamp(42px,6vw,62px);
+  margin-top:2px;
+  color:var(--burgundy);
+}
 .hero .tagline{color:var(--ink-soft);font-size:15.5px;margin-top:6px;max-width:46ch;}
 .hero .date-badge{
   font-family:'Cormorant Garamond',serif;
@@ -139,9 +151,9 @@ h1,h2,h3{
 }
 .affirmation{
   margin-top:22px;
-  font-family:'Cormorant Garamond',serif;
-  font-style:italic;
-  font-size:19px;
+  font-family:'Dancing Script','Cormorant Garamond',serif;
+  font-weight:600;
+  font-size:24px;
   color:var(--burgundy);
   border-left:3px solid var(--gold);
   padding-left:16px;
@@ -185,7 +197,7 @@ h1,h2,h3{
 /* ---------- section shell ---------- */
 .section{margin-top:44px;}
 .section-head{display:flex;justify-content:space-between;align-items:baseline;gap:14px;margin-bottom:16px;flex-wrap:wrap;}
-.section-head h2{font-size:26px;}
+.section-head h2{font-size:27px;font-style:italic;font-weight:600;}
 .section-sub{color:var(--ink-soft);font-size:14px;}
 
 .card{
@@ -211,16 +223,17 @@ h1,h2,h3{
 .habit-name .rm{opacity:0;cursor:pointer;color:var(--ink-soft);font-size:13px;transition:opacity .12s;}
 tr:hover .habit-name .rm{opacity:1;}
 .chk{
-  width:26px;height:26px;border-radius:8px;
+  width:30px;height:30px;border-radius:9px;
   border:1.5px solid var(--line);
   background:var(--cream);
   cursor:pointer;
   display:inline-flex;align-items:center;justify-content:center;
-  color:#fff;font-size:13px;
-  transition:background .12s, border-color .12s, transform .1s;
+  transition:background .15s, border-color .15s, transform .1s;
 }
-.chk:hover{transform:scale(1.06);}
-.chk[data-on="true"]{background:var(--pink-deep);border-color:var(--pink-deep);}
+.chk:hover{transform:scale(1.08);}
+.chk svg{width:18px;height:18px;fill:none;stroke:var(--ink-soft);stroke-width:1.6;transition:fill .15s,stroke .15s;}
+.chk[data-on="true"]{background:var(--pink-pale);border-color:var(--pink-deep);}
+.chk[data-on="true"] svg{fill:var(--pink-deep);stroke:var(--pink-deep);}
 .streak{font-size:12.5px;color:var(--gold);font-weight:700;white-space:nowrap;font-variant-numeric:tabular-nums;}
 .add-habit-row{margin-top:16px;display:flex;gap:10px;flex-wrap:wrap;}
 .add-habit-row input{flex:1;min-width:120px;}
@@ -417,6 +430,41 @@ input[type="date"]{color:var(--ink);}
   font-family:'Cormorant Garamond',serif;font-size:16.5px;font-weight:600;color:var(--gold);margin-bottom:4px;
 }
 
+/* ---------- star ratings ---------- */
+.stars{display:inline-flex;gap:2px;}
+.stars .star{
+  cursor:pointer;font-size:16px;line-height:1;color:var(--star-off);
+  transition:color .1s, transform .1s;
+}
+.stars .star:hover{transform:scale(1.15);}
+.stars .star[data-on="true"]{color:var(--star-on);}
+.stars.picker{margin-top:2px;}
+.media-row .stars{margin-left:auto;margin-right:8px;}
+.new-rating-row{display:flex;align-items:center;gap:8px;margin-top:8px;}
+.new-rating-row .stars .star{font-size:20px;}
+.new-rating-row label{font-size:12px;text-transform:uppercase;letter-spacing:.05em;color:var(--ink-soft);font-weight:700;}
+
+/* ---------- series / episode tracker ---------- */
+.series-card{margin-top:16px;padding-top:16px;border-top:1px solid var(--line);}
+.series-card:first-child{margin-top:0;padding-top:0;border-top:none;}
+.series-top{display:flex;justify-content:space-between;align-items:center;gap:10px;}
+.series-title{font-weight:700;font-size:14.5px;}
+.series-top .del{cursor:pointer;color:var(--ink-soft);font-size:12px;}
+.season-block{margin-top:10px;}
+.season-label{font-size:12px;color:var(--gold);font-weight:700;letter-spacing:.03em;margin-bottom:6px;}
+.episode-row{display:flex;flex-wrap:wrap;gap:6px;}
+.ep-box{
+  width:26px;height:26px;border-radius:7px;
+  border:1.5px solid var(--line);
+  background:var(--cream);
+  display:inline-flex;align-items:center;justify-content:center;
+  font-size:11px;font-weight:700;color:var(--ink-soft);
+  cursor:pointer;font-variant-numeric:tabular-nums;
+}
+.ep-box[data-on="true"]{background:var(--pink-deep);border-color:var(--pink-deep);color:#fff;}
+.add-season-row{display:flex;gap:8px;margin-top:10px;align-items:center;}
+.add-season-row input{max-width:110px;}
+
 @media (prefers-reduced-motion: reduce){
   *{transition:none !important;animation:none !important;}
 }
@@ -424,7 +472,7 @@ input[type="date"]{color:var(--ink);}
 </head>
 <body>
 <div class="wrap" id="app-root"></div>
-<script id="app-state" type="application/json">{"lastModified": "2026-08-27T00:00:00.000Z", "habitGroups": [{"id": "health", "name": "Health & body", "habits": [{"id": "water", "name": "Water"}, {"id": "sleep", "name": "Sleep"}, {"id": "movement", "name": "Movement"}, {"id": "skincare", "name": "Skincare"}, {"id": "meals", "name": "Meals"}, {"id": "vitamins", "name": "Vitamins"}]}, {"id": "faith", "name": "Faith & mindfulness", "habits": [{"id": "gratitude_dua", "name": "Gratitude & du'a"}, {"id": "prayers5", "name": "5 prayers"}, {"id": "quran", "name": "Qur'an (a page)"}, {"id": "istighfar", "name": "Istighfar (250)"}]}, {"id": "home", "name": "Home & admin", "habits": [{"id": "tidy10", "name": "Tidy 10 minutes"}, {"id": "mealprep", "name": "Meal prep / planning"}]}, {"id": "work", "name": "Work & business", "habits": [{"id": "creativetime", "name": "Creative project time"}]}, {"id": "growth", "name": "Personal growth", "habits": [{"id": "selfgrowth", "name": "Self-growth check-in"}, {"id": "socialeffort", "name": "Social effort"}]}], "habitLog": {}, "mood": {}, "dailyCheck": {}, "projects": [{"id": "nqc", "name": "Nerdy Quirks Co", "postedLog": {}, "ideas": []}, {"id": "swa", "name": "She Writes Anyway", "postedLog": {}, "ideas": []}], "homeBuying": {"milestones": [{"id": "m1", "label": "Save the deposit", "done": false}, {"id": "m2", "label": "Get a Mortgage in Principle", "done": false}, {"id": "m3", "label": "House-hunting", "done": false}, {"id": "m4", "label": "Offer accepted", "done": false}, {"id": "m5", "label": "Survey & solicitor (conveyancing)", "done": false}, {"id": "m6", "label": "Exchange contracts", "done": false}, {"id": "m7", "label": "Complete & get the keys", "done": false}], "savingsCurrent": 0, "savingsTarget": 0}, "ptQuals": {"title": "Diploma for the Gym Instructing and Personal Training Practitioner (RQF)", "units": [{"id": "u1", "name": "Anatomy and Physiology for Exercise", "progress": 0}, {"id": "u2", "name": "Applied Anatomy & Physiology", "progress": 0}, {"id": "u3", "name": "Nutrition for Physical Activity", "progress": 0}, {"id": "u4", "name": "Client Consultations and Lifestyle Management", "progress": 0}, {"id": "u5", "name": "Planning and Delivering Gym and Personal Training Programmes", "progress": 0}, {"id": "u6", "name": "Planning and Delivering Personal Training Programmes", "progress": 0}, {"id": "u7", "name": "Maximising the Customer Experience in the Exercise Environment", "progress": 0}, {"id": "u8", "name": "Business Acumen for Personal Trainers", "progress": 0}]}, "yearlyGoals": [], "books": [], "media": [], "bucketCategories": [{"id": "travel", "name": "Travel"}, {"id": "growth", "name": "Personal growth"}], "bucketItems": [], "journal": []}</script>
+<script id="app-state" type="application/json">{"lastModified": "2026-08-27T00:00:00.000Z", "habitGroups": [{"id": "health", "name": "Health & body", "habits": [{"id": "water", "name": "Water"}, {"id": "sleep", "name": "Sleep"}, {"id": "movement", "name": "Movement"}, {"id": "skincare", "name": "Skincare"}, {"id": "meals", "name": "Meals"}, {"id": "vitamins", "name": "Vitamins"}]}, {"id": "faith", "name": "Faith & mindfulness", "habits": [{"id": "gratitude_dua", "name": "Gratitude & du'a"}, {"id": "prayers5", "name": "5 prayers"}, {"id": "quran", "name": "Qur'an (a page)"}, {"id": "istighfar", "name": "Istighfar (250)"}]}, {"id": "home", "name": "Home & admin", "habits": [{"id": "tidy10", "name": "Tidy 10 minutes"}, {"id": "mealprep", "name": "Meal prep / planning"}]}, {"id": "work", "name": "Work & business", "habits": [{"id": "creativetime", "name": "Creative project time"}]}, {"id": "growth", "name": "Personal growth", "habits": [{"id": "selfgrowth", "name": "Self-growth check-in"}, {"id": "socialeffort", "name": "Social effort"}]}], "habitLog": {}, "mood": {}, "dailyCheck": {}, "projects": [{"id": "nqc", "name": "Nerdy Quirks Co", "postedLog": {}, "ideas": []}, {"id": "swa", "name": "She Writes Anyway", "postedLog": {}, "ideas": []}], "homeBuying": {"milestones": [{"id": "m1", "label": "Save the deposit", "done": false}, {"id": "m2", "label": "Get a Mortgage in Principle", "done": false}, {"id": "m3", "label": "House-hunting", "done": false}, {"id": "m4", "label": "Offer accepted", "done": false}, {"id": "m5", "label": "Survey & solicitor (conveyancing)", "done": false}, {"id": "m6", "label": "Exchange contracts", "done": false}, {"id": "m7", "label": "Complete & get the keys", "done": false}], "savingsCurrent": 0, "savingsTarget": 0}, "ptQuals": {"title": "Diploma for the Gym Instructing and Personal Training Practitioner (RQF)", "units": [{"id": "u1", "name": "Anatomy and Physiology for Exercise", "progress": 0}, {"id": "u2", "name": "Applied Anatomy & Physiology", "progress": 0}, {"id": "u3", "name": "Nutrition for Physical Activity", "progress": 0}, {"id": "u4", "name": "Client Consultations and Lifestyle Management", "progress": 0}, {"id": "u5", "name": "Planning and Delivering Gym and Personal Training Programmes", "progress": 0}, {"id": "u6", "name": "Planning and Delivering Personal Training Programmes", "progress": 0}, {"id": "u7", "name": "Maximising the Customer Experience in the Exercise Environment", "progress": 0}, {"id": "u8", "name": "Business Acumen for Personal Trainers", "progress": 0}]}, "yearlyGoals": [], "books": [], "media": [], "series": [], "bucketCategories": [{"id": "travel", "name": "Travel"}, {"id": "growth", "name": "Personal growth"}], "bucketItems": [], "journal": []}</script>
 <script src="app.js"></script>
 <script>
 if ('serviceWorker' in navigator) {
