@@ -9,6 +9,7 @@ let artifactApi = null;
 let artifactChecked = false;
 let newRating = { books: 0, media: 0 };
 let newSeasonCount = {};
+let activeTab = "today";
 
 const AFFIRMATIONS = [
   "Small steps, kept gently, still arrive.",
@@ -30,6 +31,15 @@ const MOODS = [
 ];
 
 const DAY_LABELS = ["Mon","Tue","Wed","Thu","Fri","Sat","Sun"];
+
+/* Tabs are a per-viewer UI concern, not shared state — new tabs can be added
+   here later (e.g. Finance, Fitness) without touching the state schema. */
+const TABS = [
+  {id:"today", label:"Today"},
+  {id:"studio", label:"Studio"},
+  {id:"goals", label:"Goals"},
+  {id:"reflections", label:"Reflections"}
+];
 
 /* Themed icons per default habit — outline draws in var(--ink-soft), and
    fills solid with var(--pink-deep) once ticked (handled by .chk[data-on] CSS). */
@@ -738,16 +748,34 @@ function renderJournal(){
   </div>`;
 }
 
+/* ================= render: tab bar ================= */
+function renderTabBar(){
+  const tabs = TABS.map(t=>`
+    <button type="button" class="tab-btn" data-action="switch-tab" data-tab="${t.id}" data-active="${activeTab===t.id}">${t.label}</button>
+  `).join("");
+  return `<div class="tab-bar">${tabs}</div>`;
+}
+
+function renderTabPanel(){
+  let content = "";
+  if(activeTab === "today"){
+    content = renderDailyCheck() + renderHabits();
+  } else if(activeTab === "studio"){
+    content = renderProjects();
+  } else if(activeTab === "goals"){
+    content = renderGoals() + renderThisYear();
+  } else if(activeTab === "reflections"){
+    content = renderJournal();
+  }
+  return `<div class="tab-panel">${content}</div>`;
+}
+
 /* ================= render: all ================= */
 function renderApp(){
   return `
     ${renderHero()}
-    ${renderDailyCheck()}
-    ${renderHabits()}
-    ${renderProjects()}
-    ${renderGoals()}
-    ${renderThisYear()}
-    ${renderJournal()}
+    ${renderTabBar()}
+    ${renderTabPanel()}
     <div class="divider">
       <svg viewBox="0 0 120 14" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M0 7H45" stroke="currentColor" stroke-width="1"/><path d="M75 7H120" stroke="currentColor" stroke-width="1"/><circle cx="60" cy="7" r="3" fill="currentColor"/></svg>
     </div>
@@ -920,6 +948,17 @@ function applyStoredTheme(){
     if(t==="light" || t==="dark") document.documentElement.setAttribute("data-theme", t);
   }catch(e){}
 }
+function applyStoredTab(){
+  try{
+    const tb = localStorage.getItem("asmaJournalTab");
+    if(tb && TABS.some(t=>t.id===tb)) activeTab = tb;
+  }catch(e){}
+}
+function switchTab(tabId){
+  if(!TABS.some(t=>t.id===tabId)) return;
+  activeTab = tabId;
+  try{ localStorage.setItem("asmaJournalTab", tabId); }catch(e){}
+}
 function toggleTheme(){
   const cur = document.documentElement.getAttribute("data-theme");
   const prefersDark = window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches;
@@ -938,6 +977,7 @@ function onClick(e){
 
   switch(action){
     case "toggle-theme": toggleTheme(); changed=false; break;
+    case "switch-tab": switchTab(t.getAttribute("data-tab")); render(); return;
     case "set-mood": setMood(t.getAttribute("data-mood")); break;
     case "week-prev": weekOffset -= 1; render(); return;
     case "week-next": weekOffset += 1; render(); return;
@@ -1080,6 +1120,7 @@ function onKeydown(e){
 /* ================= init ================= */
 function init(){
   applyStoredTheme();
+  applyStoredTab();
   loadInitialState();
   render();
   document.addEventListener("click", onClick);

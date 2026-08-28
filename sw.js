@@ -1,4 +1,4 @@
-const CACHE_NAME = "asma-journal-v1";
+const CACHE_NAME = "asma-journal-v2";
 const CORE_FILES = ["./", "index.html", "app.js", "manifest.json", "icon192.png", "icon512.png"];
 
 self.addEventListener("install", (event) => {
